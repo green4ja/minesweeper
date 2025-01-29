@@ -1,3 +1,4 @@
+from pathlib import Path
 import pygame
 import random
 from tile import tile
@@ -16,6 +17,11 @@ class minesweeper:
         self.grid = [[tile(x,y) for y in range(self.height)] for x in range(self.width)]
         self.generateMines()
         self.calculateNeighborMines()
+        self.basePath = Path(__file__).resolve().parent
+
+        # Load blank tile
+        self.blankTile = pygame.image.load(self.basePath / "assets" / "tiles" / "blank.png")
+        self.blankTile = pygame.transform.scale(self.blankTile, (32, 32))  # Scale to 32x32
 
     def generateMines(self):
         minesPlaced = 0
@@ -57,13 +63,13 @@ class minesweeper:
                     else:
                         pygame.draw.rect(screen, (200, 200, 200), tileRect)
                         if tile.neighborMines > 0:
-                            font = pygame.font.SysFont("Arial", 20)
+                            font = pygame.font.SysFont("Arial", 16)
                             text = font.render(str(tile.neighborMines), True, (0, 0, 0))
                             screen.blit(text, tileRect.move(10, 10))
                 else:
-                    pygame.draw.rect(screen, (0, 0, 255), tileRect)
+                    screen.blit(self.blankTile, (x * tileSize, y * tileSize))
                 
-                pygame.draw.rect(screen, (0,0,0), tileRect, 2)
+                pygame.draw.rect(screen, (123, 123, 123), tileRect, 2)
 
     def handleClick(self, x, y):
         tile = self.grid[x][y]

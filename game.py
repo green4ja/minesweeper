@@ -5,7 +5,7 @@ import pygame
 WIDTH = 9
 HEIGHT = 9
 MINES = 10
-TILESIZE = 40
+TILESIZE = 32
 
 pygame.init()
 screen = pygame.display.set_mode((WIDTH*TILESIZE, HEIGHT*TILESIZE))
