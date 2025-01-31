@@ -3,12 +3,6 @@ import pygame
 import random
 from tile import tile
 
-"""
-Beginner - > 9x9 + 10 mines
-Intermediate -> 16x16 + 40 mines
-Expert -> 30x16 + 99 mines
-"""
-
 class minesweeper:
     def __init__(self, width, height, numMines):
         self.width = width
@@ -22,6 +16,10 @@ class minesweeper:
         # Load blank tile
         self.blankTile = pygame.image.load(self.basePath / "assets" / "tiles" / "blank.png")
         self.blankTile = pygame.transform.scale(self.blankTile, (32, 32))  # Scale to 32x32
+
+        # Load flag tile
+        self.flagTile = pygame.image.load(self.basePath / "assets" / "tiles" / "flag.png")
+        self.flagTile = pygame.transform.scale(self.flagTile, (32, 32))  # Scale to 32x32
 
         # Load number tiles
         self.numberTiles = {}
@@ -72,7 +70,10 @@ class minesweeper:
                         if tile.neighborMines > 0:
                             screen.blit(self.numberTiles[tile.neighborMines], (x * tileSize, y * tileSize))
                 else:
-                    screen.blit(self.blankTile, (x * tileSize, y * tileSize))
+                    if tile.flagged:
+                        screen.blit(self.flagTile, (x * tileSize, y * tileSize))
+                    else:
+                        screen.blit(self.blankTile, (x * tileSize, y * tileSize))
                 
                 pygame.draw.rect(screen, (123, 123, 123), tileRect, 2)
 
@@ -90,3 +91,8 @@ class minesweeper:
                     nx, ny = x + dx, y + dy
                     if 0 <= nx < self.width and 0 <= ny < self.height and not self.grid[nx][ny].revealed:
                         self.handleClick(nx, ny)
+
+    def toggleFlag(self, x, y):
+        tile = self.grid[x][y]
+        if not tile.revealed:
+            tile.flagged = not tile.flagged
