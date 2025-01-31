@@ -14,6 +14,11 @@ MINES = 99
 TILESIZE = 32
 
 pygame.init()
+pygame.display.set_caption("Minesweeper")
+
+icon = pygame.image.load("assets/tiles/flag.png")
+pygame.display.set_icon(icon)
+
 screen = pygame.display.set_mode((WIDTH*TILESIZE, HEIGHT*TILESIZE))
 clock = pygame.time.Clock()
 
@@ -33,7 +38,7 @@ while True:
                     game.handleClick(grid_x, grid_y)  # Call handleClick on release
                 elif event.button == 3: # right click to flag
                     game.toggleFlag(grid_x, grid_y)
-        elif event.type == pygame.KEYUP and event.key == pygame.K_SPACE: # spacebar to flag
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE: # spacebar to flag
             x, y = pygame.mouse.get_pos()
             grid_x, grid_y = x // TILESIZE, y // TILESIZE
             if 0 <= grid_x < game.width and 0 <= grid_y < game.height:
