@@ -21,6 +21,10 @@ class minesweeper:
         self.flagTile = pygame.image.load(self.basePath / "assets" / "tiles" / "flag.png")
         self.flagTile = pygame.transform.scale(self.flagTile, (32, 32))  # Scale to 32x32
 
+        # Load mine tile
+        self.mineTile = pygame.image.load(self.basePath / "assets" / "tiles" / "mine.png")
+        self.mineTile = pygame.transform.scale(self.mineTile, (32, 32))  # Scale to 32x32
+
         # Load number tiles
         self.numberTiles = {}
         for i in range(1,9):
@@ -64,7 +68,8 @@ class minesweeper:
                 
                 if tile.revealed:
                     if tile.isMine:
-                        pygame.draw.rect(screen, (255, 0, 0), tileRect)
+                        #pygame.draw.rect(screen, (255, 0, 0), tileRect)
+                        screen.blit(self.mineTile, (x * tileSize, y * tileSize))
                     else:
                         pygame.draw.rect(screen, (189, 189, 189), tileRect)
                         if tile.neighborMines > 0:
