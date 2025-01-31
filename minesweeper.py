@@ -69,13 +69,13 @@ class minesweeper:
                         pygame.draw.rect(screen, (189, 189, 189), tileRect)
                         if tile.neighborMines > 0:
                             screen.blit(self.numberTiles[tile.neighborMines], (x * tileSize, y * tileSize))
+                        else:
+                            pygame.draw.rect(screen, (123, 123, 123), tileRect, 1)
                 else:
                     if tile.flagged:
                         screen.blit(self.flagTile, (x * tileSize, y * tileSize))
                     else:
-                        screen.blit(self.blankTile, (x * tileSize, y * tileSize))
-                
-                pygame.draw.rect(screen, (123, 123, 123), tileRect, 2)
+                        screen.blit(self.blankTile, (x * tileSize, y * tileSize ))
 
     def handleClick(self, x, y):
         tile = self.grid[x][y]
