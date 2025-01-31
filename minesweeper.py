@@ -23,6 +23,13 @@ class minesweeper:
         self.blankTile = pygame.image.load(self.basePath / "assets" / "tiles" / "blank.png")
         self.blankTile = pygame.transform.scale(self.blankTile, (32, 32))  # Scale to 32x32
 
+        # Load number tiles
+        self.numberTiles = {}
+        for i in range(1,9):
+            imgPath = self.basePath / "assets" / "tiles" / f"{i}.png"
+            self.numberTiles[i] = pygame.image.load(imgPath)
+            self.numberTiles[i] = pygame.transform.scale(self.numberTiles[i], (32,32))
+
     def generateMines(self):
         minesPlaced = 0
 
@@ -61,11 +68,9 @@ class minesweeper:
                     if tile.isMine:
                         pygame.draw.rect(screen, (255, 0, 0), tileRect)
                     else:
-                        pygame.draw.rect(screen, (200, 200, 200), tileRect)
+                        pygame.draw.rect(screen, (189, 189, 189), tileRect)
                         if tile.neighborMines > 0:
-                            font = pygame.font.SysFont("Arial", 16)
-                            text = font.render(str(tile.neighborMines), True, (0, 0, 0))
-                            screen.blit(text, tileRect.move(10, 10))
+                            screen.blit(self.numberTiles[tile.neighborMines], (x * tileSize, y * tileSize))
                 else:
                     screen.blit(self.blankTile, (x * tileSize, y * tileSize))
                 

@@ -2,9 +2,9 @@ from minesweeper import minesweeper
 import pygame
 
 # TEST PARAMETERS
-WIDTH = 9
-HEIGHT = 9
-MINES = 10
+WIDTH = 30
+HEIGHT = 16
+MINES = 99
 TILESIZE = 32
 
 pygame.init()
@@ -20,11 +20,11 @@ while True:
             pygame.quit()
             exit()
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONUP:
             x, y = event.pos
-            x //= TILESIZE
-            y //= TILESIZE
-            game.handleClick(x, y)
+            grid_x, grid_y = x // TILESIZE, y // TILESIZE  # Convert to grid coordinates
+            if 0 <= grid_x < game.width and 0 <= grid_y < game.height:
+                game.handleClick(grid_x, grid_y)  # Call handleClick on release
 
     game.draw(screen, TILESIZE)
     pygame.display.flip()
