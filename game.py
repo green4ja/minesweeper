@@ -10,9 +10,9 @@ Grandmaster -> 40x22 + 182 mines
 """
 
 # Parameters
-WIDTH = 16
+WIDTH = 30
 HEIGHT = 16
-MINES = 40
+MINES = 99
 TILESIZE = 32
 
 # Initalize pygame and set the application title
@@ -46,19 +46,19 @@ while True:
         # User releases a mouse click
         elif event.type == pygame.MOUSEBUTTONUP:
             x, y = event.pos
-            grid_x, grid_y = x // TILESIZE, y // TILESIZE  # Convert to grid coordinates
-            if 0 <= grid_x < game.width and 0 <= grid_y < game.height:
+            gridX, gridY = x // TILESIZE, y // TILESIZE  # Convert to grid coordinates
+            if 0 <= gridX < game.width and 0 <= gridY < game.height:
                 if event.button == 1:  # Left click (action)
-                    game.handleClick(grid_x, grid_y)
+                    game.handleClick(gridX, gridY)
                 elif event.button == 3: # Right click (flag)
-                    game.toggleFlag(grid_x, grid_y)
+                    game.toggleFlag(gridX, gridY)
 
         # User presses the spacebar
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE: # Spacebar to flag
             x, y = pygame.mouse.get_pos()
-            grid_x, grid_y = x // TILESIZE, y // TILESIZE
-            if 0 <= grid_x < game.width and 0 <= grid_y < game.height:
-                game.toggleFlag(grid_x, grid_y)
+            gridX, gridY = x // TILESIZE, y // TILESIZE
+            if 0 <= gridX < game.width and 0 <= gridY < game.height:
+                game.toggleFlag(gridX, gridY)
 
     # Draw the screen
     game.draw(screen, TILESIZE)

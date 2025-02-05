@@ -9,8 +9,7 @@ class minesweeper:
         self.height = height
         self.numMines = numMines
         self.grid = [[tile(x,y) for y in range(self.height)] for x in range(self.width)]
-        self.generateMines()
-        self.calculateNeighborMines()
+        self.minesGenerated = False
         self.basePath = Path(__file__).resolve().parent
 
         # Load blank tile
@@ -32,28 +31,40 @@ class minesweeper:
             self.numberTiles[i] = pygame.image.load(imgPath)
             self.numberTiles[i] = pygame.transform.scale(self.numberTiles[i], (32,32))
 
-    def generateMines(self):
+    def generateMines(self, safeX, safeY, safeRadius=2):
         minesPlaced = 0
+
+        safeZone = set()
+        for dx in range(-safeRadius, safeRadius + 1):
+            for dy in range(-safeRadius, safeRadius + 1):
+                nx, ny = safeX + dx, safeY + dy
+                if 0 <= nx < self.width and 0 <= ny < self.height:
+                    safeZone.add((nx,ny))
 
         while minesPlaced < self.numMines:
             x = random.randint(0, self.width - 1)
             y = random.randint(0, self.height - 1)
+            if (x, y) in safeZone:
+                continue
 
-            if self.grid[x][y].isMine == False:
+            if not self.grid[x][y].isMine:
                 self.grid[x][y].isMine = True
                 minesPlaced += 1
+
+        # After mines are placed, calculate neighbor counts
+        self.calculateNeighborMines()
 
     def calculateNeighborMines(self):
         for x in range(self.width):
             for y in range(self.height):
                 currentTile = self.grid[x][y]
 
-                if currentTile.isMine == True:
+                if currentTile.isMine:
                     continue
 
                 neighborMines = 0
 
-                for dx in [-1,0,1]:
+                for dx in [-1, 0, 1]:
                     for dy in [-1, 0, 1]:
                         nx, ny = x + dx, y + dy
                         if 0 <= nx < self.width and 0 <= ny < self.height and self.grid[nx][ny].isMine:
@@ -83,6 +94,11 @@ class minesweeper:
                         screen.blit(self.blankTile, (x * tileSize, y * tileSize ))
 
     def handleClick(self, x, y):
+        # Handle first click on new board
+        if not self.minesGenerated:
+            self.generateMines(x, y, safeRadius=2)
+            self.minesGenerated = True
+        
         tile = self.grid[x][y]
         if tile.revealed or tile.flagged:
             return
