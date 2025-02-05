@@ -27,7 +27,7 @@ icon = pygame.image.load(basePath / "assets" / "tiles" / "flag.png")
 pygame.display.set_icon(icon)
 
 # Initialize the screen
-screen = pygame.display.set_mode((WIDTH*TILESIZE, HEIGHT*TILESIZE))
+screen = pygame.display.set_mode((WIDTH * TILESIZE, HEIGHT * TILESIZE))
 
 # Start clock
 clock = pygame.time.Clock()

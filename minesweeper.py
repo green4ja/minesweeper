@@ -5,9 +5,12 @@ from tile import tile
 
 class minesweeper:
     def __init__(self, width, height, numMines):
+        # Dimensions and mine count
         self.width = width
         self.height = height
         self.numMines = numMines
+
+        # Game grid
         self.grid = [[tile(x,y) for y in range(self.height)] for x in range(self.width)]
         self.minesGenerated = False
         self.basePath = Path(__file__).resolve().parent
@@ -30,6 +33,13 @@ class minesweeper:
             imgPath = self.basePath / "assets" / "tiles" / f"{i}.png"
             self.numberTiles[i] = pygame.image.load(imgPath)
             self.numberTiles[i] = pygame.transform.scale(self.numberTiles[i], (32,32))
+
+        # Load reset tiles
+        self.startTile = pygame.image.load(self.basePath / "assets" / "tiles" / "start.png")
+        self.startTile = pygame.transform.scale(self.startTile, (32, 32))
+        self.gameOverTile = pygame.image.load(self.basePath / "assets" / "tiles" / "game-over-reset.png")
+        self.gameOverTile = pygame.transform.scale(self.gameOverTile, (32, 32))
+        self.resetTile = self.startTile
 
     def generateMines(self, safeX, safeY, safeRadius=2):
         minesPlaced = 0
@@ -79,7 +89,6 @@ class minesweeper:
                 
                 if tile.revealed:
                     if tile.isMine:
-                        #pygame.draw.rect(screen, (255, 0, 0), tileRect)
                         screen.blit(self.mineTile, (x * tileSize, y * tileSize))
                     else:
                         pygame.draw.rect(screen, (189, 189, 189), tileRect)
@@ -106,6 +115,7 @@ class minesweeper:
         tile.revealed = True
         if tile.isMine:
             print("Game Over!")
+            self.resetTile = self.gameOverTile
         elif tile.neighborMines == 0:
             for dx in [-1, 0, 1]:
                 for dy in [-1, 0, 1]:
@@ -117,3 +127,8 @@ class minesweeper:
         tile = self.grid[x][y]
         if not tile.revealed:
             tile.flagged = not tile.flagged
+
+    def resetGame(self):
+        self.minesGenerated = False
+        self.resetTile = self.startTile
+        self.grid = [[tile(x, y) for y in range(self.height)] for x in range(self.width)]
