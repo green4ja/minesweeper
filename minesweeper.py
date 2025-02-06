@@ -2,6 +2,7 @@ from pathlib import Path
 import pygame
 import random
 from tile import tile
+import time
 
 class minesweeper:
     def __init__(self, width, height, numMines):
@@ -40,6 +41,10 @@ class minesweeper:
         self.gameOverTile = pygame.image.load(self.basePath / "assets" / "tiles" / "game-over-reset.png")
         self.gameOverTile = pygame.transform.scale(self.gameOverTile, (32, 32))
         self.resetTile = self.startTile
+
+        # Timer and bombs left
+        self.startTime = None
+        self.flagsPlaced = 0
 
     def generateMines(self, safeX, safeY, safeRadius=2):
         minesPlaced = 0
@@ -80,33 +85,62 @@ class minesweeper:
                         if 0 <= nx < self.width and 0 <= ny < self.height and self.grid[nx][ny].isMine:
                             neighborMines += 1
                 currentTile.neighborMines = neighborMines
+
+    def drawResetButton(self, screen, buttonRect):
+        screen.blit(self.resetTile, buttonRect.topleft)
     
     def draw(self, screen, tileSize):
+        # Fill background area above grid
+        screen.fill((189, 189, 189), pygame.Rect(0, 0, screen.get_width(), 50))
+        
+        # Draw reset button
+        buttonRect = pygame.Rect((screen.get_width() - 32) // 2, 10, 32, 32)
+        self.drawResetButton(screen, buttonRect)
+
+        # Draw the timer
+        if self.startTime:
+            elapsedTime = int(time.time() - self.startTime)
+            font = pygame.font.SysFont(None, 36)
+            timerText = font.render(f"Time: {elapsedTime}", True, (0, 0, 0))
+            screen.blit(timerText, (screen.get_width() - 150, 10))
+        else:
+            font = pygame.font.SysFont(None, 36)
+            timerText = font.render(f"Time: 0", True, (0, 0, 0))
+            screen.blit(timerText, (screen.get_width() - 150, 10))
+
+        # Draw the bombs left indicator
+        bombsLeft = self.numMines - self.flagsPlaced
+        font = pygame.font.SysFont(None, 36)
+        bombsLeftText = font.render(f"Bombs: {bombsLeft}", True, (0, 0, 0))
+        screen.blit(bombsLeftText, (10, 10))
+
+
         for x in range(self.width):
             for y in range(self.height):
                 tile = self.grid[x][y]
-                tileRect = pygame.Rect(x * tileSize, y * tileSize, tileSize, tileSize)
+                tileRect = pygame.Rect(x * tileSize, y * tileSize + 50, tileSize, tileSize)
                 
                 if tile.revealed:
                     if tile.isMine:
-                        screen.blit(self.mineTile, (x * tileSize, y * tileSize))
+                        screen.blit(self.mineTile, tileRect.topleft)
                     else:
                         pygame.draw.rect(screen, (189, 189, 189), tileRect)
                         if tile.neighborMines > 0:
-                            screen.blit(self.numberTiles[tile.neighborMines], (x * tileSize, y * tileSize))
+                            screen.blit(self.numberTiles[tile.neighborMines], tileRect.topleft)
                         else:
                             pygame.draw.rect(screen, (123, 123, 123), tileRect, 1)
                 else:
                     if tile.flagged:
-                        screen.blit(self.flagTile, (x * tileSize, y * tileSize))
+                        screen.blit(self.flagTile, tileRect.topleft)
                     else:
-                        screen.blit(self.blankTile, (x * tileSize, y * tileSize ))
+                        screen.blit(self.blankTile, tileRect.topleft)
 
     def handleClick(self, x, y):
         # Handle first click on new board
         if not self.minesGenerated:
             self.generateMines(x, y, safeRadius=2)
             self.minesGenerated = True
+            self.startTime = time.time()
         
         tile = self.grid[x][y]
         if tile.revealed or tile.flagged:
@@ -116,6 +150,7 @@ class minesweeper:
         if tile.isMine:
             print("Game Over!")
             self.resetTile = self.gameOverTile
+            self.startTime = None
         elif tile.neighborMines == 0:
             for dx in [-1, 0, 1]:
                 for dy in [-1, 0, 1]:
@@ -123,12 +158,20 @@ class minesweeper:
                     if 0 <= nx < self.width and 0 <= ny < self.height and not self.grid[nx][ny].revealed:
                         self.handleClick(nx, ny)
 
+    def handleResetButtonClick(self, mousePos):
+        buttonRect = pygame.Rect((self.width * 32 - 32) // 2, 10, 32, 32)
+        if buttonRect.collidepoint(mousePos):
+            self.resetGame()
+
     def toggleFlag(self, x, y):
         tile = self.grid[x][y]
         if not tile.revealed:
             tile.flagged = not tile.flagged
+            self.flagsPlaced += 1 if tile.flagged else -1
 
     def resetGame(self):
         self.minesGenerated = False
         self.resetTile = self.startTile
         self.grid = [[tile(x, y) for y in range(self.height)] for x in range(self.width)]
+        self.startTime = None
+        self.flagsPlaced = 0

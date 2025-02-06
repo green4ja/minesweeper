@@ -10,9 +10,9 @@ Grandmaster -> 40x22 + 182 mines
 """
 
 # Parameters
-WIDTH = 30
+WIDTH = 16
 HEIGHT = 16
-MINES = 99
+MINES = 40
 TILESIZE = 32
 
 # Initalize pygame and set the application title
@@ -27,7 +27,7 @@ icon = pygame.image.load(basePath / "assets" / "tiles" / "flag.png")
 pygame.display.set_icon(icon)
 
 # Initialize the screen
-screen = pygame.display.set_mode((WIDTH * TILESIZE, HEIGHT * TILESIZE))
+screen = pygame.display.set_mode((WIDTH * TILESIZE, HEIGHT * TILESIZE + 50))
 
 # Start clock
 clock = pygame.time.Clock()
@@ -46,19 +46,23 @@ while True:
         # User releases a mouse click
         elif event.type == pygame.MOUSEBUTTONUP:
             x, y = event.pos
-            gridX, gridY = x // TILESIZE, y // TILESIZE  # Convert to grid coordinates
-            if 0 <= gridX < game.width and 0 <= gridY < game.height:
-                if event.button == 1:  # Left click (action)
-                    game.handleClick(gridX, gridY)
-                elif event.button == 3: # Right click (flag)
-                    game.toggleFlag(gridX, gridY)
+            if y <= 50:
+                game.handleResetButtonClick(event.pos)
+            else:
+                gridX, gridY = x // TILESIZE, (y - 50) // TILESIZE  # Convert to grid coordinates
+                if 0 <= gridX < game.width and 0 <= gridY < game.height:
+                    if event.button == 1:  # Left click (action)
+                        game.handleClick(gridX, gridY)
+                    elif event.button == 3: # Right click (flag)
+                        game.toggleFlag(gridX, gridY)
 
         # User presses the spacebar
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE: # Spacebar to flag
             x, y = pygame.mouse.get_pos()
-            gridX, gridY = x // TILESIZE, y // TILESIZE
-            if 0 <= gridX < game.width and 0 <= gridY < game.height:
-                game.toggleFlag(gridX, gridY)
+            if y > 50:
+                gridX, gridY = x // TILESIZE, (y - 50) // TILESIZE
+                if 0 <= gridX < game.width and 0 <= gridY < game.height:
+                    game.toggleFlag(gridX, gridY)
 
     # Draw the screen
     game.draw(screen, TILESIZE)
