@@ -46,7 +46,7 @@ while True:
         # User releases a mouse click
         elif event.type == pygame.MOUSEBUTTONUP:
             x, y = event.pos
-            if y <= 50:
+            if y <= 50 and event.button == 1:
                 game.handleResetButtonClick(event.pos)
             else:
                 gridX, gridY = x // TILESIZE, (y - 50) // TILESIZE  # Convert to grid coordinates

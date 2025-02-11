@@ -44,6 +44,7 @@ class minesweeper:
 
         # Timer and bombs left
         self.startTime = None
+        self.gameOverTime = None
         self.flagsPlaced = 0
 
     def generateMines(self, safeX, safeY, safeRadius=2):
@@ -98,15 +99,15 @@ class minesweeper:
         self.drawResetButton(screen, buttonRect)
 
         # Draw the timer
-        if self.startTime:
+        font = pygame.font.SysFont(None, 36)
+        if self.gameOverTime is not None:
+            elapsedTime = self.gameOverTime
+        elif self.startTime:
             elapsedTime = int(time.time() - self.startTime)
-            font = pygame.font.SysFont(None, 36)
-            timerText = font.render(f"Time: {elapsedTime}", True, (0, 0, 0))
-            screen.blit(timerText, (screen.get_width() - 150, 10))
         else:
-            font = pygame.font.SysFont(None, 36)
-            timerText = font.render(f"Time: 0", True, (0, 0, 0))
-            screen.blit(timerText, (screen.get_width() - 150, 10))
+            elapsedTime = 0
+        timerText = font.render(f"Time: {elapsedTime}", True, (0, 0, 0))
+        screen.blit(timerText, (screen.get_width() - 150, 10))
 
         # Draw the bombs left indicator
         bombsLeft = self.numMines - self.flagsPlaced
@@ -150,6 +151,8 @@ class minesweeper:
         if tile.isMine:
             print("Game Over!")
             self.resetTile = self.gameOverTile
+            if self.startTime is not None:
+                self.gameOverTime = int(time.time() - self.startTime)
             self.startTime = None
         elif tile.neighborMines == 0:
             for dx in [-1, 0, 1]:
@@ -174,4 +177,5 @@ class minesweeper:
         self.resetTile = self.startTile
         self.grid = [[tile(x, y) for y in range(self.height)] for x in range(self.width)]
         self.startTime = None
+        self.gameOverTime = None
         self.flagsPlaced = 0
