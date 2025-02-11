@@ -47,6 +47,18 @@ class minesweeper:
         self.gameOverTime = None
         self.flagsPlaced = 0
 
+        # Load number tiles for timer and bomb counter
+        self.timerTiles = {}
+        for i in range(10):
+            imgPath = self.basePath / "assets" / "tiles" / f"n{i}.png"
+            self.timerTiles[str(i)] = pygame.image.load(imgPath)
+            self.timerTiles[str(i)] = pygame.transform.scale(self.timerTiles[str(i)], (32, 64))
+
+        # Load negative sign tile
+        self.timerTiles["-"] = pygame.image.load(self.basePath / "assets" / "tiles" / "nneg.png")
+        self.timerTiles["-"] = pygame.transform.scale(self.timerTiles["-"], (32, 64))
+
+
     def generateMines(self, safeX, safeY, safeRadius=2):
         minesPlaced = 0
 
@@ -89,37 +101,48 @@ class minesweeper:
 
     def drawResetButton(self, screen, buttonRect):
         screen.blit(self.resetTile, buttonRect.topleft)
+
+    def drawNumber(self, screen, number, x, y):
+        numStr = str(max(-99, min(999, number)))  # Clamp number between -99 and 999
+        
+        # Ensure it's always 3 characters long
+        if number < 0:
+            numStr = "-" + numStr[1:].zfill(2)  # Example: -5 -> "-05"
+        else:
+            numStr = numStr.zfill(3)  # Example: 5 -> "005"
+
+        # Draw each digit
+        for i, char in enumerate(numStr):
+            digitImage = self.timerTiles[char]  # Get the image for the digit/negative sign
+            screen.blit(digitImage, (x + i * 32, y))  # Offset for each digit
+
     
     def draw(self, screen, tileSize):
         # Fill background area above grid
-        screen.fill((189, 189, 189), pygame.Rect(0, 0, screen.get_width(), 50))
+        screen.fill((189, 189, 189), pygame.Rect(0, 0, screen.get_width(), 80))
         
         # Draw reset button
-        buttonRect = pygame.Rect((screen.get_width() - 32) // 2, 10, 32, 32)
+        buttonRect = pygame.Rect((screen.get_width() - 32) // 2, (80 - 32) // 2, 32, 32)
         self.drawResetButton(screen, buttonRect)
 
-        # Draw the timer
-        font = pygame.font.SysFont(None, 36)
-        if self.gameOverTime is not None:
-            elapsedTime = self.gameOverTime
-        elif self.startTime:
-            elapsedTime = int(time.time() - self.startTime)
-        else:
-            elapsedTime = 0
-        timerText = font.render(f"Time: {elapsedTime}", True, (0, 0, 0))
-        screen.blit(timerText, (screen.get_width() - 150, 10))
+        # Determine elapsed time
+        elapsedTime = self.gameOverTime if self.gameOverTime is not None else int(time.time() - self.startTime) if self.startTime else 0
+        elapsedTime = min(elapsedTime, 999)  # Limit to 999 max
 
-        # Draw the bombs left indicator
+        # Draw timer using images
+        self.drawNumber(screen, elapsedTime, screen.get_width() - 120, 10)
+
+        # Calculate bombs left
         bombsLeft = self.numMines - self.flagsPlaced
-        font = pygame.font.SysFont(None, 36)
-        bombsLeftText = font.render(f"Bombs: {bombsLeft}", True, (0, 0, 0))
-        screen.blit(bombsLeftText, (10, 10))
 
+        # Draw bombs left using images
+        self.drawNumber(screen, bombsLeft, 10, 10)
 
+        # Draw the game grid
         for x in range(self.width):
             for y in range(self.height):
                 tile = self.grid[x][y]
-                tileRect = pygame.Rect(x * tileSize, y * tileSize + 50, tileSize, tileSize)
+                tileRect = pygame.Rect(x * tileSize, y * tileSize + 80, tileSize, tileSize)
                 
                 if tile.revealed:
                     if tile.isMine:
@@ -162,7 +185,7 @@ class minesweeper:
                         self.handleClick(nx, ny)
 
     def handleResetButtonClick(self, mousePos):
-        buttonRect = pygame.Rect((self.width * 32 - 32) // 2, 10, 32, 32)
+        buttonRect = pygame.Rect((self.width * 32 - 32) // 2, (80 - 32) // 2, 32, 32)
         if buttonRect.collidepoint(mousePos):
             self.resetGame()
 

@@ -10,9 +10,9 @@ Grandmaster -> 40x22 + 182 mines
 """
 
 # Parameters
-WIDTH = 16
+WIDTH = 30
 HEIGHT = 16
-MINES = 40
+MINES = 99
 TILESIZE = 32
 
 # Initalize pygame and set the application title
@@ -27,7 +27,7 @@ icon = pygame.image.load(basePath / "assets" / "tiles" / "flag.png")
 pygame.display.set_icon(icon)
 
 # Initialize the screen
-screen = pygame.display.set_mode((WIDTH * TILESIZE, HEIGHT * TILESIZE + 50))
+screen = pygame.display.set_mode((WIDTH * TILESIZE, HEIGHT * TILESIZE + 80))
 
 # Start clock
 clock = pygame.time.Clock()
@@ -46,10 +46,10 @@ while True:
         # User releases a mouse click
         elif event.type == pygame.MOUSEBUTTONUP:
             x, y = event.pos
-            if y <= 50 and event.button == 1:
+            if y <= 80 and event.button == 1:
                 game.handleResetButtonClick(event.pos)
             else:
-                gridX, gridY = x // TILESIZE, (y - 50) // TILESIZE  # Convert to grid coordinates
+                gridX, gridY = x // TILESIZE, (y - 80) // TILESIZE  # Convert to grid coordinates
                 if 0 <= gridX < game.width and 0 <= gridY < game.height:
                     if event.button == 1:  # Left click (action)
                         game.handleClick(gridX, gridY)
@@ -59,8 +59,8 @@ while True:
         # User presses the spacebar
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE: # Spacebar to flag
             x, y = pygame.mouse.get_pos()
-            if y > 50:
-                gridX, gridY = x // TILESIZE, (y - 50) // TILESIZE
+            if y > 80:
+                gridX, gridY = x // TILESIZE, (y - 80) // TILESIZE
                 if 0 <= gridX < game.width and 0 <= gridY < game.height:
                     game.toggleFlag(gridX, gridY)
 
