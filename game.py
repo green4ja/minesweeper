@@ -44,7 +44,7 @@ while True:
             exit()
 
         # User releases a mouse click
-        elif event.mtype == pygame.MOUSEBUTTONUP:
+        elif event.type == pygame.MOUSEBUTTONUP:
             x, y = event.pos
             if y <= 80 and event.button == 1:
                 game.handleResetButtonClick(event.pos)
