@@ -37,9 +37,9 @@ class minesweeper:
 
         # Load reset tiles
         self.startTile = pygame.image.load(self.basePath / "assets" / "tiles" / "start.png")
-        self.startTile = pygame.transform.scale(self.startTile, (32, 32))
+        self.startTile = pygame.transform.scale(self.startTile, (64, 64))
         self.gameOverTile = pygame.image.load(self.basePath / "assets" / "tiles" / "game-over-reset.png")
-        self.gameOverTile = pygame.transform.scale(self.gameOverTile, (32, 32))
+        self.gameOverTile = pygame.transform.scale(self.gameOverTile, (64, 64))
         self.resetTile = self.startTile
 
         # Timer and bombs left
@@ -122,7 +122,7 @@ class minesweeper:
         screen.fill((189, 189, 189), pygame.Rect(0, 0, screen.get_width(), 80))
         
         # Draw reset button
-        buttonRect = pygame.Rect((screen.get_width() - 32) // 2, (80 - 32) // 2, 32, 32)
+        buttonRect = pygame.Rect((screen.get_width() - 64) // 2, (80 - 64) // 2, 64, 64)
         self.drawResetButton(screen, buttonRect)
 
         # Determine elapsed time
@@ -185,7 +185,7 @@ class minesweeper:
                         self.handleClick(nx, ny)
 
     def handleResetButtonClick(self, mousePos):
-        buttonRect = pygame.Rect((self.width * 32 - 32) // 2, (80 - 32) // 2, 32, 32)
+        buttonRect = pygame.Rect((self.width * 32 - 64) // 2, (80 - 64) // 2, 64, 64)
         if buttonRect.collidepoint(mousePos):
             self.resetGame()
 
