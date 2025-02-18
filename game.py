@@ -1,4 +1,4 @@
-from minesweeper import minesweeper
+from minesweeper import Minesweeper
 from pathlib import Path
 import pygame
 
@@ -10,9 +10,9 @@ Grandmaster -> 40x22 + 182 mines
 """
 
 # Parameters
-WIDTH = 30
-HEIGHT = 16
-MINES = 99
+WIDTH = 9
+HEIGHT = 9
+MINES = 10
 TILESIZE = 32
 
 # Initalize pygame and set the application title
@@ -33,7 +33,7 @@ screen = pygame.display.set_mode((WIDTH * TILESIZE, HEIGHT * TILESIZE + 80))
 clock = pygame.time.Clock()
 
 # Create a Minesweeper game
-game = minesweeper(WIDTH, HEIGHT, MINES)
+game = Minesweeper(WIDTH, HEIGHT, MINES)
 
 # Game loop
 while True:
