@@ -71,6 +71,9 @@ class Minesweeper:
         self.timer_tiles["-"] = pygame.image.load(self.base_path / "assets" / "tiles" / "nneg.png")
         self.timer_tiles["-"] = pygame.transform.scale(self.timer_tiles["-"], (32, 64))
 
+        # Game state
+        self.game_state = "active" # Possible states: "active", "won", "lost"
+
 
     def generate_mines(self, safe_x, safe_y, safe_radius=2):
         """
@@ -235,6 +238,9 @@ class Minesweeper:
         Returns:
             None
         """
+        if self.game_state != "active":
+            return
+        
         # Handle first click on new board
         if not self.mines_generated:
             self.generate_mines(x, y, safe_radius=2)
@@ -249,6 +255,7 @@ class Minesweeper:
         if tile.is_mine:
             print("Game Over!")
             self.reset_tile = self.game_over_tile
+            self.game_state = "lost"
             if self.start_time is not None:
                 self.game_over_time = int(time.time() - self.start_time)
             self.start_time = None
@@ -256,6 +263,7 @@ class Minesweeper:
             if self.check_win():
                 print("You win!")
                 self.reset_tile = self.game_win_tile
+                self.game_state = "won"
                 if self.start_time is not None:
                     self.game_over_time = int(time.time() - self.start_time)
                 self.start_time = None
@@ -291,6 +299,9 @@ class Minesweeper:
         Returns:
             None
         """
+        if self.game_state != "active":
+            return
+        
         tile = self.grid[x][y]
         if not tile.revealed:
             tile.flagged = not tile.flagged
@@ -312,6 +323,7 @@ class Minesweeper:
         self.start_time = None
         self.game_over_time = None
         self.flags_placed = 0
+        self.game_state = "active"
 
     def check_win(self):
         """
