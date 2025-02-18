@@ -177,12 +177,19 @@ class minesweeper:
             if self.startTime is not None:
                 self.gameOverTime = int(time.time() - self.startTime)
             self.startTime = None
-        elif tile.neighborMines == 0:
-            for dx in [-1, 0, 1]:
-                for dy in [-1, 0, 1]:
-                    nx, ny = x + dx, y + dy
-                    if 0 <= nx < self.width and 0 <= ny < self.height and not self.grid[nx][ny].revealed:
-                        self.handleClick(nx, ny)
+        else:
+            if self.checkWin():
+                print("You win!")
+                self.resetTile = self.startTile
+                if self.startTime is not None:
+                    self.gameOverTime = int(time.time() - self.startTime)
+                self.startTime = None
+            elif tile.neighborMines == 0:
+                for dx in [-1, 0, 1]:
+                    for dy in [-1, 0, 1]:
+                        nx, ny = x + dx, y + dy
+                        if 0 <= nx < self.width and 0 <= ny < self.height and not self.grid[nx][ny].revealed:
+                            self.handleClick(nx, ny)
 
     def handleResetButtonClick(self, mousePos):
         buttonRect = pygame.Rect((self.width * 32 - 64) // 2, (80 - 64) // 2, 64, 64)
@@ -202,3 +209,11 @@ class minesweeper:
         self.startTime = None
         self.gameOverTime = None
         self.flagsPlaced = 0
+
+    def checkWin(self):
+        for x in range(self.width):
+            for y in range(self.height):
+                tile = self.grid[x][y]
+                if not tile.isMine and not tile.revealed:
+                    return False
+        return True

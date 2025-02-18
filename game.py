@@ -10,9 +10,9 @@ Grandmaster -> 40x22 + 182 mines
 """
 
 # Parameters
-WIDTH = 9
-HEIGHT = 9
-MINES = 10
+WIDTH = 30
+HEIGHT = 16
+MINES = 99
 TILESIZE = 32
 
 # Initalize pygame and set the application title
