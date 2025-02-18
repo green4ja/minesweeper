@@ -1,7 +1,7 @@
 from pathlib import Path
 import pygame
 import random
-from tile import tile
+from tile import Tile
 import time
 
 class minesweeper:
@@ -12,7 +12,7 @@ class minesweeper:
         self.numMines = numMines
 
         # Game grid
-        self.grid = [[tile(x,y) for y in range(self.height)] for x in range(self.width)]
+        self.grid = [[Tile(x,y) for y in range(self.height)] for x in range(self.width)]
         self.minesGenerated = False
         self.basePath = Path(__file__).resolve().parent
 
@@ -75,8 +75,8 @@ class minesweeper:
             if (x, y) in safeZone:
                 continue
 
-            if not self.grid[x][y].isMine:
-                self.grid[x][y].isMine = True
+            if not self.grid[x][y].is_mine:
+                self.grid[x][y].is_mine = True
                 minesPlaced += 1
 
         # After mines are placed, calculate neighbor counts
@@ -87,17 +87,17 @@ class minesweeper:
             for y in range(self.height):
                 currentTile = self.grid[x][y]
 
-                if currentTile.isMine:
+                if currentTile.is_mine:
                     continue
 
-                neighborMines = 0
+                neighbor_mines = 0
 
                 for dx in [-1, 0, 1]:
                     for dy in [-1, 0, 1]:
                         nx, ny = x + dx, y + dy
-                        if 0 <= nx < self.width and 0 <= ny < self.height and self.grid[nx][ny].isMine:
-                            neighborMines += 1
-                currentTile.neighborMines = neighborMines
+                        if 0 <= nx < self.width and 0 <= ny < self.height and self.grid[nx][ny].is_mine:
+                            neighbor_mines += 1
+                currentTile.neighbor_mines = neighbor_mines
 
     def drawResetButton(self, screen, buttonRect):
         screen.blit(self.resetTile, buttonRect.topleft)
@@ -145,12 +145,12 @@ class minesweeper:
                 tileRect = pygame.Rect(x * tileSize, y * tileSize + 80, tileSize, tileSize)
                 
                 if tile.revealed:
-                    if tile.isMine:
+                    if tile.is_mine:
                         screen.blit(self.mineTile, tileRect.topleft)
                     else:
                         pygame.draw.rect(screen, (189, 189, 189), tileRect)
-                        if tile.neighborMines > 0:
-                            screen.blit(self.numberTiles[tile.neighborMines], tileRect.topleft)
+                        if tile.neighbor_mines > 0:
+                            screen.blit(self.numberTiles[tile.neighbor_mines], tileRect.topleft)
                         else:
                             pygame.draw.rect(screen, (123, 123, 123), tileRect, 1)
                 else:
@@ -171,7 +171,7 @@ class minesweeper:
             return
         
         tile.revealed = True
-        if tile.isMine:
+        if tile.is_mine:
             print("Game Over!")
             self.resetTile = self.gameOverTile
             if self.startTime is not None:
@@ -184,7 +184,7 @@ class minesweeper:
                 if self.startTime is not None:
                     self.gameOverTime = int(time.time() - self.startTime)
                 self.startTime = None
-            elif tile.neighborMines == 0:
+            elif tile.neighbor_mines == 0:
                 for dx in [-1, 0, 1]:
                     for dy in [-1, 0, 1]:
                         nx, ny = x + dx, y + dy
@@ -205,7 +205,7 @@ class minesweeper:
     def resetGame(self):
         self.minesGenerated = False
         self.resetTile = self.startTile
-        self.grid = [[tile(x, y) for y in range(self.height)] for x in range(self.width)]
+        self.grid = [[Tile(x, y) for y in range(self.height)] for x in range(self.width)]
         self.startTime = None
         self.gameOverTime = None
         self.flagsPlaced = 0
@@ -214,6 +214,6 @@ class minesweeper:
         for x in range(self.width):
             for y in range(self.height):
                 tile = self.grid[x][y]
-                if not tile.isMine and not tile.revealed:
+                if not tile.is_mine and not tile.revealed:
                     return False
         return True
