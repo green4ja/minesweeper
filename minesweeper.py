@@ -51,6 +51,8 @@ class Minesweeper:
         self.start_tile = pygame.transform.scale(self.start_tile, (64, 64))
         self.game_over_tile = pygame.image.load(self.base_path / "assets" / "tiles" / "game-over-reset.png")
         self.game_over_tile = pygame.transform.scale(self.game_over_tile, (64, 64))
+        self.game_win_tile = pygame.image.load(self.base_path / "assets" / "tiles" / "game-win.png")
+        self.game_win_tile = pygame.transform.scale(self.game_win_tile, (64, 64))
         self.reset_tile = self.start_tile
 
         # Timer and bombs left
@@ -253,7 +255,7 @@ class Minesweeper:
         else:
             if self.check_win():
                 print("You win!")
-                self.reset_tile = self.start_tile
+                self.reset_tile = self.game_win_tile
                 if self.start_time is not None:
                     self.game_over_time = int(time.time() - self.start_time)
                 self.start_time = None
