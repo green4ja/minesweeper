@@ -20,10 +20,10 @@ pygame.init()
 pygame.display.set_caption("Minesweeper")
 
 # Get script directory path
-basePath = Path(__file__).resolve().parent
+base_path = Path(__file__).resolve().parent
 
 # Load flag tile as program icon
-icon = pygame.image.load(basePath / "assets" / "tiles" / "flag.png")
+icon = pygame.image.load(base_path / "assets" / "tiles" / "flag.png")
 pygame.display.set_icon(icon)
 
 # Initialize the screen
@@ -47,22 +47,22 @@ while True:
         elif event.type == pygame.MOUSEBUTTONUP:
             x, y = event.pos
             if y <= 80 and event.button == 1:
-                game.handleResetButtonClick(event.pos)
+                game.handle_reset_button_click(event.pos)
             else:
-                gridX, gridY = x // TILESIZE, (y - 80) // TILESIZE  # Convert to grid coordinates
-                if 0 <= gridX < game.width and 0 <= gridY < game.height:
+                grid_x, grid_y = x // TILESIZE, (y - 80) // TILESIZE  # Convert to grid coordinates
+                if 0 <= grid_x < game.width and 0 <= grid_y < game.height:
                     if event.button == 1:  # Left click (action)
-                        game.handleClick(gridX, gridY)
+                        game.handle_click(grid_x, grid_y)
                     elif event.button == 3: # Right click (flag)
-                        game.toggleFlag(gridX, gridY)
+                        game.toggle_flag(grid_x, grid_y)
 
         # User presses the spacebar
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE: # Spacebar to flag
             x, y = pygame.mouse.get_pos()
             if y > 80:
-                gridX, gridY = x // TILESIZE, (y - 80) // TILESIZE
-                if 0 <= gridX < game.width and 0 <= gridY < game.height:
-                    game.toggleFlag(gridX, gridY)
+                grid_x, grid_y = x // TILESIZE, (y - 80) // TILESIZE
+                if 0 <= grid_x < game.width and 0 <= grid_y < game.height:
+                    game.toggle_flag(grid_x, grid_y)
 
     # Draw the screen
     game.draw(screen, TILESIZE)

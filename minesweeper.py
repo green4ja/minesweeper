@@ -6,6 +6,17 @@ import time
 
 class Minesweeper:
     def __init__(self, width, height, number_of_mines):
+        """
+        Initialize the Minesweeper game.
+
+        Args:
+            width (int): The width of the game grid.
+            height (int): The height of the game grid.
+            number_of_mines (int): The number of mines to place on the grid.
+        
+        Returns:
+            None
+        """
         # Dimensions and mine count
         self.width = width
         self.height = height
@@ -57,6 +68,7 @@ class Minesweeper:
         # Load negative sign tile
         self.timer_tiles["-"] = pygame.image.load(self.base_path / "assets" / "tiles" / "nneg.png")
         self.timer_tiles["-"] = pygame.transform.scale(self.timer_tiles["-"], (32, 64))
+
 
     def generate_mines(self, safe_x, safe_y, safe_radius=2):
         """
@@ -131,22 +143,44 @@ class Minesweeper:
         """
         screen.blit(self.reset_tile, button_rect.topleft)
 
-    def drawNumber(self, screen, number, x, y):
-        numStr = str(max(-99, min(999, number)))  # Clamp number between -99 and 999
+    def draw_number(self, screen, number, x, y):
+        """
+        Draw a number on the screen using images.
+        
+        Args:
+            screen (pygame.Surface): The screen to draw on.
+            number (int): The number to draw.
+            x (int): The x-coordinate to draw the number.
+            y (int): The y-coordinate to draw the number.
+        
+        Returns:
+            None
+        """
+        formatted_number = str(max(-99, min(999, number)))  # Clamp number between -99 and 999
         
         # Ensure it's always 3 characters long
         if number < 0:
-            numStr = "-" + numStr[1:].zfill(2)  # Example: -5 -> "-05"
+            formatted_number = "-" + formatted_number[1:].zfill(2)  # Example: -5 -> "-05"
         else:
-            numStr = numStr.zfill(3)  # Example: 5 -> "005"
+            formatted_number = formatted_number.zfill(3)  # Example: 5 -> "005"
 
         # Draw each digit
-        for i, char in enumerate(numStr):
-            digitImage = self.timer_tiles[char]  # Get the image for the digit/negative sign
-            screen.blit(digitImage, (x + i * 32, y))  # Offset for each digit
+        for i, char in enumerate(formatted_number):
+            digit_image = self.timer_tiles[char]  # Get the image for the digit/negative sign
+            screen.blit(digit_image, (x + i * 32, y))  # Offset for each digit
 
     
-    def draw(self, screen, tileSize):
+    def draw(self, screen, tile_size):
+        """
+        Draw the Minesweeper game on the screen.
+        
+        Args:
+            screen (pygame.Surface): The screen to draw on.
+            tile_size (int): The size of each tile.
+            
+        Returns:
+            None
+        """
         # Fill background area above grid
         screen.fill((189, 189, 189), pygame.Rect(0, 0, screen.get_width(), 80))
         
@@ -155,40 +189,50 @@ class Minesweeper:
         self.draw_reset_button(screen, button_rect)
 
         # Determine elapsed time
-        elapsedTime = self.game_over_time if self.game_over_time is not None else int(time.time() - self.start_time) if self.start_time else 0
-        elapsedTime = min(elapsedTime, 999)  # Limit to 999 max
+        elapsed_time = self.game_over_time if self.game_over_time is not None else int(time.time() - self.start_time) if self.start_time else 0
+        elapsed_time = min(elapsed_time, 999)  # Limit to 999 max
 
         # Draw timer using images
-        self.drawNumber(screen, elapsedTime, screen.get_width() - 120, 10)
+        self.draw_number(screen, elapsed_time, screen.get_width() - 120, 10)
 
         # Calculate bombs left
-        bombsLeft = self.number_of_mines - self.flags_placed
+        bombs_left = self.number_of_mines - self.flags_placed
 
         # Draw bombs left using images
-        self.drawNumber(screen, bombsLeft, 10, 10)
+        self.draw_number(screen, bombs_left, 10, 10)
 
         # Draw the game grid
         for x in range(self.width):
             for y in range(self.height):
                 tile = self.grid[x][y]
-                tileRect = pygame.Rect(x * tileSize, y * tileSize + 80, tileSize, tileSize)
+                tile_rect = pygame.Rect(x * tile_size, y * tile_size + 80, tile_size, tile_size)
                 
                 if tile.revealed:
                     if tile.is_mine:
-                        screen.blit(self.mine_tile, tileRect.topleft)
+                        screen.blit(self.mine_tile, tile_rect.topleft)
                     else:
-                        pygame.draw.rect(screen, (189, 189, 189), tileRect)
+                        pygame.draw.rect(screen, (189, 189, 189), tile_rect)
                         if tile.neighbor_mines > 0:
-                            screen.blit(self.number_tiles[tile.neighbor_mines], tileRect.topleft)
+                            screen.blit(self.number_tiles[tile.neighbor_mines], tile_rect.topleft)
                         else:
-                            pygame.draw.rect(screen, (123, 123, 123), tileRect, 1)
+                            pygame.draw.rect(screen, (123, 123, 123), tile_rect, 1)
                 else:
                     if tile.flagged:
-                        screen.blit(self.flag_tile, tileRect.topleft)
+                        screen.blit(self.flag_tile, tile_rect.topleft)
                     else:
-                        screen.blit(self.blank_tile, tileRect.topleft)
+                        screen.blit(self.blank_tile, tile_rect.topleft)
 
-    def handleClick(self, x, y):
+    def handle_click(self, x, y):
+        """
+        Handle a click on the game grid.
+
+        Args:
+            x (int): The x-coordinate of the clicked tile.
+            y (int): The y-coordinate of the clicked tile.
+        
+        Returns:
+            None
+        """
         # Handle first click on new board
         if not self.mines_generated:
             self.generate_mines(x, y, safe_radius=2)
@@ -207,7 +251,7 @@ class Minesweeper:
                 self.game_over_time = int(time.time() - self.start_time)
             self.start_time = None
         else:
-            if self.checkWin():
+            if self.check_win():
                 print("You win!")
                 self.reset_tile = self.start_tile
                 if self.start_time is not None:
@@ -218,20 +262,48 @@ class Minesweeper:
                     for dy in [-1, 0, 1]:
                         nx, ny = x + dx, y + dy
                         if 0 <= nx < self.width and 0 <= ny < self.height and not self.grid[nx][ny].revealed:
-                            self.handleClick(nx, ny)
+                            self.handle_click(nx, ny)
 
-    def handleResetButtonClick(self, mousePos):
+    def handle_reset_button_click(self, mouse_position):
+        """
+        Handle a click on the reset button.
+        
+        Args:
+            mouse_position (tuple): The x, y coordinates of the mouse click.
+        
+        Returns:
+            None
+        """
         button_rect = pygame.Rect((self.width * 32 - 64) // 2, (80 - 64) // 2, 64, 64)
-        if button_rect.collidepoint(mousePos):
-            self.resetGame()
+        if button_rect.collidepoint(mouse_position):
+            self.reset_game()
 
-    def toggleFlag(self, x, y):
+    def toggle_flag(self, x, y):
+        """
+        Toggle the flag on a tile.
+
+        Args:
+            x (int): The x-coordinate of the tile.
+            y (int): The y-coordinate of the tile.
+
+        Returns:
+            None
+        """
         tile = self.grid[x][y]
         if not tile.revealed:
             tile.flagged = not tile.flagged
             self.flags_placed += 1 if tile.flagged else -1
 
-    def resetGame(self):
+    def reset_game(self):
+        """
+        Reset the game to its initial state.
+
+        Args:
+            None
+        
+        Returns:
+            None
+        """
         self.mines_generated = False
         self.reset_tile = self.start_tile
         self.grid = [[Tile(x, y) for y in range(self.height)] for x in range(self.width)]
@@ -239,7 +311,16 @@ class Minesweeper:
         self.game_over_time = None
         self.flags_placed = 0
 
-    def checkWin(self):
+    def check_win(self):
+        """
+        Check if the player has won the game.
+
+        Args:
+            None
+        
+        Returns:
+            bool: True if the player has won, False otherwise.
+        """
         for x in range(self.width):
             for y in range(self.height):
                 tile = self.grid[x][y]
