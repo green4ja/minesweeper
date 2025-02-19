@@ -198,7 +198,8 @@ class Minesweeper:
         elapsed_time = min(elapsed_time, 999)  # Limit to 999 max
 
         # Draw timer using images
-        self.draw_number(screen, elapsed_time, screen.get_width() - 120, 10)
+        timer_x = screen.get_width() - 105 if screen.get_width() > 200 else screen.get_width() - 150
+        self.draw_number(screen, elapsed_time, timer_x, 10)
 
         # Calculate bombs left
         bombs_left = self.number_of_mines - self.flags_placed
