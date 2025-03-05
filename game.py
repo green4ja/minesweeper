@@ -10,9 +10,9 @@ Grandmaster -> 40x22 + 182 mines
 """
 
 # Parameters
-WIDTH = 40
-HEIGHT = 22
-MINES = 182
+WIDTH = 16
+HEIGHT = 16
+MINES = 40
 TILESIZE = 32
 
 # Initalize pygame and set the application title
@@ -68,4 +68,3 @@ while True:
     game.draw(screen, TILESIZE)
     pygame.display.flip()
     clock.tick(30) # 30 FPS
-

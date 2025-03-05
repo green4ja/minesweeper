@@ -228,6 +228,22 @@ class Minesweeper:
                     else:
                         screen.blit(self.blank_tile, tile_rect.topleft)
 
+    def reveal_all_mines(self):
+        """
+        Reveal all mines on the game grid.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        for x in range(self.width):
+            for y in range(self.height):
+                tile = self.grid[x][y]
+                if tile.is_mine and not tile.flagged:
+                    tile.revealed = True
+
     def handle_click(self, x, y):
         """
         Handle a click on the game grid.
@@ -257,6 +273,7 @@ class Minesweeper:
             print("Game Over!")
             self.reset_tile = self.game_over_tile
             self.game_state = "lost"
+            self.reveal_all_mines()
             if self.start_time is not None:
                 self.game_over_time = int(time.time() - self.start_time)
             self.start_time = None
