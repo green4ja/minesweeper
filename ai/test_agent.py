@@ -14,7 +14,9 @@ MINES = 10
 
 # Initialize environment and agent
 env = MinesweeperEnv(WIDTH, HEIGHT, MINES)
-agent = QLearningAgent(WIDTH, HEIGHT, actions=["click", "flag"])
+agent = QLearningAgent(
+    WIDTH, HEIGHT, actions=["click", "flag"], epsilon=0
+)  # Set epsilon to 0
 
 # Load the trained Q-table
 q_table_path = Path(__file__).resolve().parent / "q_table.pkl"

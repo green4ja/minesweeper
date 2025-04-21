@@ -18,7 +18,8 @@ EPISODES = 1000
 env = MinesweeperEnv(WIDTH, HEIGHT, MINES)
 agent = QLearningAgent(WIDTH, HEIGHT, actions=["click", "flag"])
 
-# Training loop
+win_count = 0
+
 for episode in range(EPISODES):
     state = env.reset()
     total_reward = 0
@@ -31,10 +32,11 @@ for episode in range(EPISODES):
         state = next_state
         total_reward += reward
 
-    print(f"Episode {episode + 1}/{EPISODES}: Total Reward = {total_reward}")
+    if env.game.game_state == "won":
+        win_count += 1
 
-# Save the Q-table after training
-q_table_path = Path(__file__).resolve().parent / "q_table.pkl"
-with open(q_table_path, "wb") as f:
-    pickle.dump(agent.q_table, f)
-print(f"Training complete. Q-table saved to {q_table_path}.")
+    if (episode + 1) % 100 == 0:  # Log every 100 episodes
+        print(
+            f"Episode {episode + 1}/{EPISODES}: Total Reward = {total_reward}, Win Rate = {win_count / 100:.2%}"
+        )
+        win_count = 0
