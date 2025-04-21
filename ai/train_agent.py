@@ -1,4 +1,10 @@
+import sys
 import pickle
+from pathlib import Path
+
+# Add the project root directory to the Python path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
 from ai.minesweeper_env import MinesweeperEnv
 from ai.q_learning_agent import QLearningAgent
 
@@ -28,6 +34,7 @@ for episode in range(EPISODES):
     print(f"Episode {episode + 1}/{EPISODES}: Total Reward = {total_reward}")
 
 # Save the Q-table after training
-with open("q_table.pkl", "wb") as f:
+q_table_path = Path(__file__).resolve().parent / "q_table.pkl"
+with open(q_table_path, "wb") as f:
     pickle.dump(agent.q_table, f)
-print("Training complete. Q-table saved to q_table.pkl.")
+print(f"Training complete. Q-table saved to {q_table_path}.")

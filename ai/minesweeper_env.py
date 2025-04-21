@@ -1,4 +1,10 @@
+import sys
 import numpy as np
+from pathlib import Path
+
+# Add the project root directory to the Python path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
 from minesweeper import Minesweeper
 
 

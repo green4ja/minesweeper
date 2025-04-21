@@ -1,3 +1,9 @@
+import sys
+from pathlib import Path
+
+# Add the project root directory to the Python path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
 from ai.minesweeper_env import MinesweeperEnv
 from ai.q_learning_agent import QLearningAgent
 
@@ -11,7 +17,8 @@ env = MinesweeperEnv(WIDTH, HEIGHT, MINES)
 agent = QLearningAgent(WIDTH, HEIGHT, actions=["click", "flag"])
 
 # Load the trained Q-table
-agent.load_q_table("q_table.pkl")
+q_table_path = Path(__file__).resolve().parent / "q_table.pkl"
+agent.load_q_table(q_table_path)
 
 # Test the agent
 state = env.reset()
